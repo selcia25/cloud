@@ -1,0 +1,51 @@
+Exercise 6: Task Scheduling and Load Balancing in a Cloud Environment
+
+Part 1: Task Scheduling
+
+Task 1: Implement Task Scheduling with Cloud Services
+
+- Open VMware Workstation Pro 17:
+    Power on the VMs you plan to use (e.g., UbuntuSelcia and UbuntuClone).
+- Configure Task Scheduling on Ubuntu VMs:
+    We will use cron to schedule tasks, which is the Linux utility for task scheduling.
+- Create a Task in Ubuntu VM:
+    Create a script file using: nano script.sh
+    Add: echo “Hello Selcia”
+- Open the cron file using the command: crontab -e
+- Add a scheduled task (for example, to run a script every 1 minute):
+		*/1 * * * * ./script.sh
+- Verify the Task:
+    Check if the task is running by checking the output of the script or inspecting logs, if any. 
+	    tail -f /var/log/syslog
+     
+Part 2: Load Balancing
+
+- Install and Configure HAProxy on a Separate VM (Load Balancer):
+- You can use a separate VM to act as the load balancer or install HAProxy on one of your VMs.
+- Install HAProxy using the following command:
+		sudo apt install haproxy -y
+- Configure HAProxy:
+    Open the HAProxy configuration file: sudo nano /etc/haproxy/haproxy.cfg
+    Add the following configuration to set up load balancing among your VMs:
+    		frontend http_front
+          bind *:80
+          default_backend http_back
+        backend http_back
+            balance roundrobin
+            server vm1 <VM1_IP>:80 check
+            server vm2 <VM2_IP>:80 check
+            server vm3 <VM3_IP>:80 check
+- Start HAProxy Service:
+- After configuring HAProxy, restart the service to apply changes:
+		sudo systemctl restart haproxy
+    sudo systemctl enable haproxy
+- Test the Load Balancer: http://<load_balancer_IP>
+
+Part 3: Advanced Scheduling and Load Balancing (Optional)
+
+Task 1: Implement Advanced Scheduling with Prioritization
+
+- Prioritization in Task Scheduling (Cron):
+    You can set priorities for tasks in Linux using nice and renice commands. Modify your cron jobs to execute scripts with priority:
+	    */1 * * * * nice -n 10 .//script.sh
+    In this case, nice -n 10 lowers the priority of the task. You can adjust the priority by changing the value between -20 (highest priority) and 19 (lowest priority).
