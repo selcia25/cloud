@@ -1,0 +1,72 @@
+Part 1: Setting Up a Hypervisor Cluster
+
+Task 1: Set Up Hypervisor Hosts
+
+- Install VMware ESXi on Virtual Machines:
+    Install VMware ESXi (which is a hypervisor) on virtual machines (VMs) in VMware Workstation Pro 17. You can use two or more VMs for this.
+    Download the VMware ESXi ISO from the VMware website and install it on each VM as the operating system.
+- Steps to Install ESXi on VMs:
+    Open VMware Workstation Pro 17 and create a new VM.
+    When selecting the OS, choose Linux → Other Linux 5.x kernel 64-bit (for ESXi compatibility).
+    Mount the ESXi ISO and follow the installation prompts.
+    Repeat this process for all VMs (e.g., ESXiHost1 and ESXiHost2).
+- Configure Networking:
+    Ensure that all your ESXi hosts are on the same network. You can create a custom virtual network in VMware Workstation for the VMs to communicate.
+    Assign static IPs to each ESXi VM for easier management.
+- Access ESXi Web Interface:
+    Once the ESXi VMs are installed, access their web interfaces by opening a browser and entering the IP address of each host.
+      http://<ESXiHost1_IP_Address>
+      
+Task 2: Configure Hypervisor Clustering
+
+- Install vCenter Server: VMware vCenter Server is needed to manage multiple ESXi hosts as a cluster.
+- Download the vCenter Server Appliance (VCSA) from VMware.
+- Create a new VM in VMware Workstation and install the VCSA on it.
+- Follow the installation prompts and configure the networking for vCenter.
+- Add ESXi Hosts to vCenter:
+    Open the vCenter web client from a browser:
+      https://<vCenter_IP_Address>:5480
+- Log in with the credentials you set during installation.
+- Go to Hosts and Clusters in the vCenter interface.
+- Add both ESXi hosts (ESXiHost1 and ESXiHost2) to vCenter.
+- Click on Add Host, and enter the IP address, username, and password of each ESXi host.
+- This will allow vCenter to manage the hypervisors.
+- Create a Cluster in vCenter:
+    Once both hosts are added, right-click on the Datacenter in vCenter and choose New Cluster.
+    Enable features like DRS (Distributed Resource Scheduler) and HA (High Availability).
+    Add both ESXi hosts to the newly created cluster.
+    
+Part 2: Implement High Availability and Load Balancing
+
+Task 1: Configure High Availability for VMs
+
+- Enable High Availability (HA):
+    In the vCenter web interface, go to your cluster and enable HA.
+    HA ensures that if one ESXi host fails, the VMs running on it are automatically restarted on another host in the cluster.
+    Steps to Enable HA:
+      Right-click on the cluster and go to Settings.
+      In the cluster settings, navigate to vSphere Availability and enable HA.
+      Set the failover capacity, which defines how many host failures the cluster can tolerate.
+      
+Task 2: Implement Load Balancing
+
+- Enable Distributed Resource Scheduler (DRS):
+    DRS dynamically balances the VM workloads across the ESXi hosts in the cluster based on resource usage.
+    Go to your cluster in vCenter, right-click and choose Settings.
+    Under vSphere DRS, enable DRS.
+    Set it to fully automated mode for automatic load balancing, where VMs are migrated between hosts as needed to balance the load.
+    
+Part 3: Manage and Migrate Virtual Machines
+
+Task 1: Migrate VMs Across Hypervisors
+
+- Create Virtual Machines in ESXi Hosts:
+    Use vCenter or the ESXi web interface to create several virtual machines (VMs) on the cluster.
+- Perform Live Migration (vMotion):
+    vMotion allows you to migrate running VMs from one ESXi host to another with no downtime.
+- In the vCenter web interface, select a VM and choose Migrate.
+- Follow the steps to migrate the VM to another ESXi host within the cluster.
+- Live Migration Steps:
+    Right-click on the VM.
+    Select Migrate.
+    Choose the destination host (another ESXi in the cluster) and complete the migration process.
