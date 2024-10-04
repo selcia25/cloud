@@ -1,0 +1,48 @@
+Exercise 5: Virtual Instances and Server Consolidation with Fault Tolerance in a Cloud Environment
+
+Part 1: Virtual Instances Management
+
+Task 1: Create and Configure Virtual Instances
+
+- Open VMware Workstation Pro 17:
+- Start VMware Workstation and open your existing Ubuntu 24.04.1 LTS VM.
+- Clone Virtual Instances (VMs):
+    Since you already have one Ubuntu VM, you can create additional VMs by cloning.
+    Right-click on the existing Ubuntu VM and select Manage > Clone.
+    In the cloning wizard, select Create a full clone to make identical copies of the VM.
+    Clone as many VMs as you need (e.g., two or three additional VMs for the lab exercise).
+- Power On the Cloned VMs:
+    Power on the newly cloned VMs by right-clicking on each and selecting Power On.
+    Once powered on, open the terminal in each VM.
+- Install Apache Web Server on Each VM:
+    For each VM, install Apache using the following commands: 
+      sudo apt update
+      sudo apt install apache2 -y
+- Verify Apache is running:
+	    sudo systemctl status apache2
+- You can modify the Apache default web page to make it unique for each instance:
+	    sudo nano /var/www/html/index.html
+- Configure Networking: ifconfig 
+
+Task 2: Implement Basic Load Balancing
+
+- Install and Configure HAProxy on a Separate VM (Load Balancer):
+- You can use a separate VM to act as the load balancer or install HAProxy on one of your VMs.
+- Install HAProxy using the following command:
+      sudo apt install haproxy -y
+- Configure HAProxy:
+    Open the HAProxy configuration file: sudo nano /etc/haproxy/haproxy.cfg
+    Add the following configuration to set up load balancing among your VMs:
+		  frontend http_front
+        bind *:80
+        default_backend http_back
+      backend http_back
+          balance roundrobin
+          server vm1 <VM1_IP>:80 check
+          server vm2 <VM2_IP>:80 check
+          server vm3 <VM3_IP>:80 check
+- Start HAProxy Service:
+    After configuring HAProxy, restart the service to apply changes:
+		  sudo systemctl restart haproxy
+      sudo systemctl enable haproxy
+- Test the Load Balancer: http://<load_balancer_IP>
